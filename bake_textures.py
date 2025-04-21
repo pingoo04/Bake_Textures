@@ -103,16 +103,21 @@ def rename(group): # rename the group like so: (group_name)_(layer_name)
     #Gimp.message(str(len(list_group)))
     for layer in list_group:
         if layer.get_visible() == True:
-            group_name = slice_from_suffix(group.get_name(), " copy")
-            group_name = slice_from_suffix(group_name, " #")
-            layer_name = slice_from_suffix(layer.get_name(), ".png")
-            new_name = group_name+"_"+layer_name+" baked"
+            group_name = slice_from_suffixs(group.get_name(), (" copy", " #")) # remove copy and #(number) from the end of the name
+            layer_name = slice_from_suffixs(layer.get_name(), (" copy", " #", ".")) # remove copy, #(number) and the file type from the end of the name
+            new_name = group_name+"_"+layer_name+" baked" # here baked is placed for ease of search from others plugins
             group.set_name(new_name)
 
 def slice_from_suffix(name, suffix):
     name = name.strip()         # remove spaces from start and end
     name_i = name.find(suffix) # get the begining (index) of the suffix
+    if name_i == -1 : return name # if name does not contain the suffix return 
     return name[0:name_i]       # slice the suffix
+
+def slice_from_suffixs(name, suffixs):
+    for suffix in suffixs:
+        name = slice_from_suffix(name, suffix)
+    return name
 
 def is_group_of_group(drawables):
 
